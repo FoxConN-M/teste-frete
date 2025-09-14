@@ -15,7 +15,7 @@ def create_shipping_quotes():
         payload = request.get_json(force=True, silent=False)
         package = QuoteRequest.model_validate(payload)
     except ValidationError as e:
-        return jsonify({"eror": "Invalid payload", "details": e.errors}), 422
+        return jsonify({"error": "Invalid payload", "details": e.errors()}), 422
     except Exception:
         return jsonify({"error": "Malformed JSON"}), 400
     
