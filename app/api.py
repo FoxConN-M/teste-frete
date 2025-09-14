@@ -13,11 +13,11 @@ def health():
 def create_shipping_quotes():
     try:
         payload = request.get_json(force=True, silent=False)
-        req = QuoteRequest.model_validate(payload)
+        package = QuoteRequest.model_validate(payload)
     except ValidationError as e:
         return jsonify({"eror": "Invalid payload", "details": e.errors}), 422
     except Exception:
         return jsonify({"error": "Malformed JSON"}), 400
     
-    quotes = get_quotes(req)
+    quotes = get_quotes(package)
     return jsonify([to_serializable(q) for q in quotes]), 200

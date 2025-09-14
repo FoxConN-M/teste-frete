@@ -1,43 +1,17 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from decimal import Decimal, ROUND_HALF_UP
-from typing import Optional
-
-from .models import QuoteRequest, QuoteResponse
-
-TWOPLACES = Decimal("0.01")
+from decimal import Decimal
 
 @dataclass(frozen=True)
 
 class BaseCarrier:
     name: str
     constant: Decimal
-    min_height: int
+    min_height: int 
     max_height: int
     min_width: int
     max_width: int
     delivery_days: int
-
-    def is_eligible(self, req: QuoteRequest) -> bool:
-        h = req.dimention.height
-        w = req.dimention.widht
-        return (
-            self.min_height <= h <= self.max_height
-            and self.min_width <= w <= self.max_width
-            and req.weight > 0
-        )
-    
-    def quote(self, req: QuoteRequest) -> Optional[QuoteResponse]:
-        if not self.is_eligible(req):
-            return None
-        # (weight * constant / 10) -> duas casas decimais
-        raw = (Decimal(req.weight) * self.constant) / Decimal(10)
-        amount = raw.quantize(TWOPLACES, rounding=ROUND_HALF_UP)
-        return QuoteResponse.model_construct(
-            nome=self.name,
-            valor_frete=amount,
-            prazo_dias=self.delivery_days,
-        )
 
 # Catalogo das transportadoras
 ENTREGA_NINJA = BaseCarrier(
